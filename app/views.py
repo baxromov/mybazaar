@@ -72,6 +72,14 @@ class CartModelViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = models.Cart.objects.all()
 
+    def create(self, request, *args, **kwargs):
+        carts = request.user.carts.all()
+        if carts.count() and not carts.last().status == 'active':
+            return carts.last()
+        else:
+            carts = models.Cart.objects.create(customer=request.user)
+        return response.Response(status=200)
+
 
 class CartItemModelViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
     serializer_class = serializers.CartItemModelSerializer

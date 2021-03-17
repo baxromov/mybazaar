@@ -33,14 +33,13 @@ class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 
+class CartItemAdmin(admin.StackedInline):
+    model = models.CartItem
+
+
 @admin.register(models.Cart)
 class CartAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(models.CartItem)
-class CartItemAdmin(admin.ModelAdmin):
-    pass
+    inlines = [CartItemAdmin, ]
 
 
 @admin.register(models.Banner)
