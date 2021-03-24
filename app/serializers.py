@@ -1,5 +1,5 @@
-from django.contrib.auth import get_user_model, authenticate
 from rest_framework import serializers
+
 from . import models
 
 
@@ -50,9 +50,16 @@ class CartModelSerializer(serializers.ModelSerializer):
 
 
 class CartItemModelSerializer(serializers.ModelSerializer):
+    # hffg = serializers.SerializerMethodField()
+
     class Meta:
         model = models.CartItem
-        fields = '__all__'
+        fields = [
+            'cart',
+            'product',
+            'quantity',
+            'created_at',
+        ]
 
 
 class BannerModelSerializer(serializers.ModelSerializer):

@@ -52,8 +52,6 @@ class Address(models.Model):
     district = models.CharField(choices=DISTRICT, max_length=100)
     waymark = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
-    full_name = models.CharField(max_length=512)
-    phone_number = models.CharField(max_length=13)
     note = models.TextField(null=True, blank=True)
 
     def __str__(self):

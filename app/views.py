@@ -1,9 +1,11 @@
+import requests
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework import viewsets, response, status, permissions, views
 from rest_framework import filters
 from . import models
 from . import serializers
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class LoginViewGenericAPIView(views.APIView):
@@ -72,6 +74,10 @@ class CartModelViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = models.Cart.objects.all()
 
+    def get_queryset(self):
+        query = models.Cart.objects.filter(customer=self.request.user)
+        return query
+
     def create(self, request, *args, **kwargs):
         carts = request.user.carts.all()
         if carts.count() and not carts.last().status == 'active':
@@ -85,6 +91,14 @@ class CartItemModelViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
     serializer_class = serializers.CartItemModelSerializer
     permission_classes = (permissions.IsAuthenticated,)
     queryset = models.CartItem.objects.all()
+
+    def get_queryset(self):
+        return self.queryset.filter(cart__customer=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        data = super(CartItemModelViewSet, self).create(request, *args, **kwargs)
+        data['cart'] = models.CartItem.objects.filter(cart__customer=request.user)
+        return data
 
 
 class BannerModelViewSet(viewsets.ModelViewSet):
